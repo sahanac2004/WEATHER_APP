@@ -23,7 +23,7 @@ Run
 Full Screen
 Copy code
 cd weather-app
-Open the weather.html file in your web browser.
+Open the index.html file in your web browser.
 
 Enter a location in the input field and click the "Get Weather" button to display the current weather conditions for that location.
 
