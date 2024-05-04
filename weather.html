@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      text-align: center;
+      background: linear-gradient(-45deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .container {
+      border: 1px solid #000000;
+      padding: 2rem;
+      text-align: center;
+      width: 80%;
+      max-width: 600px;
+      margin-top: 2rem;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+
+    .container p {
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    #location-input {
+      width: 200px;
+      height: 35px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .welcome {
+      display: block;
+      margin-top: 2rem;
+    }
+
+    .welcome h1, .welcome h2, .welcome h3 {
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        width: 90%;
+        padding: 1.5rem;
+      }
+
+      .container p {
+        font-size: 16px;
+      }
+
+      #location-input, #get-weather-btn {
+        width: 150px;
+        height: 30px;
+        font-size: 14px;
+      }
+    }
+
+    .rainy {
+      background-image: url('rainy.jpg');
+    }
+
+    .clear-sky {
+      background-image: url('clear-sky.jpg');
+      color: #1f0101;
+    }
+
+    .cloudy {
+      background-image: url('cloudy.jpg');
+      color: #1f0101;
+    }
+
+    .misty {
+      background-image: url('misty.jpg');
+      color: #1f0101;
+    }
+
+    .smoky {
+      background-image: url('smoky.jpg');
+      color: #1f0101;
+    }
+
+    .hazy {
+      background-image: url('hazy.jpg');
+      color: white;
+    }
+
+    .dusty {
+      background-image: url('dusty.jpg');
+      color: #1f0101;
+    }
+
+    .foggy {
+      background-image: url('foggy.jpg');
+      color: #1f0101;
+    }
+
+    .sandy {
+      background-image: url('sandy.jpg');
+      color: #1f0101;
+    }
+
+    .ashy {
+      background-image: url('ashy.jpg');
+      color: #1f0101;
+    }
+
+    .squally {
+      background-image: url('squally.jpg');
+      color: #1f0101;
+    }
+
+    .tornado {
+      background-image: url('tornado.jpg');
+      color: #1f0101;
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome">
+    <h1>Hello! Everyone Welcome to Weather App.</h1>
+    <h2>You can search the weather of your main city and get description of the city you searched.</h2>
+    <h3>Feel free to use the Weather App.</h3>
+  </div>
+  <div style="display: flex; justify-content: center; margin-top: 20px;">
+    <input id="location-input" type="text" placeholder="Enter location">
+    <button type="button" class="btn btn-warning" id="get-weather-btn" style="color: #000000; background-color: rgb(168, 165, 162);">Get Weather</button>
+  </div>
+  <div class="container">
+    <h1 id="weather-header"></h1>
+    <p id="weather-description"></p>
+    <p id="temperature"></p>
+    <p id="humidity"></p>
+    <p id="wind-speed"></p>
+    <p id="quotes"></p>
+  </div>
+
+  <script>
+    const weatherApiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+    const apiKey = '831181dd1ea96974398337c9e7fc1092';
+    const locationInput = document.getElementById('location-input');
+    const getWeatherBtn = document.getElementById('get-weather-btn');
+    const weatherHeader = document.getElementById('weather-header');
+    const weatherDescription = document.getElementById('weather-description');
+    const temperature = document.getElementById('temperature');
+    const humidity = document.getElementById('humidity');
+    const windSpeed = document.getElementById('wind-speed');
+    const body = document.body;
+    const container = document.querySelector('.container');
+    const welcome = document.querySelector('.welcome');
+
+    getWeatherBtn.addEventListener('click', async () => {
+      const location = locationInput.value.trim();
+      if (location === '') {
+        alert('Please enter a location');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${weatherApiUrl}?q=${location}&appid=${apiKey}&units=metric`);
+        const data = await response.json();
+        if (response.ok) {
+          displayWeatherData(data);
+          container.style.display = 'block';
+          welcome.style.display = 'none';
+        } else {
+          alert('Failed to retrieve weather data');
+        }
+      } catch (error) {
+        alert('Failed to retrieve weather data');
+      }
+    });
+
+    function displayWeatherData(data) {
+      weatherHeader.textContent = `Weather in ${data.name}`;
+      weatherDescription.textContent = `Description: ${data.weather[0].description}`;
+      temperature.textContent = `Temperature: ${data.main.temp}°C`;
+      humidity.textContent = `Humidity: ${data.main.humidity}%`;
+      windSpeed.textContent = `Wind Speed: ${data.wind.speed} m/s`;
+
+      body.className = '';
+      switch (data.weather[0].main.toLowerCase()) {
+        case 'rain':
+          body.classList.add('rainy');
+          document.getElementById('quotes').innerHTML = 'Don\'t forget your umbrella today, and enjoy the soothing rain!';
+          break;
+        case 'clear':
+          body.classList.add('clear-sky');
+          document.getElementById('quotes').innerHTML = 'Clear skies ahead, perfect for a day outdoors!';
+          break;
+        case 'clouds':
+          body.classList.add('cloudy');
+          document.getElementById('quotes').innerHTML = 'Cloudy skies, but every cloud has a silver lining!';
+          break;
+        case 'mist':
+          body.classList.add('misty');
+          document.getElementById('quotes').innerHTML = 'Misty morning, take a deep breath and enjoy the misty air!';
+          break;
+        case 'smoke':
+          body.classList.add('smoky');
+          document.getElementById('quotes').innerHTML = 'Stay indoors and keep safe in smoky conditions.';
+          break;
+        case 'haze':
+          body.classList.add('hazy');
+          document.getElementById('quotes').innerHTML = 'Hazy day, take it slow and enjoy the hazy atmosphere.';
+          break;
+        case 'dust':
+          body.classList.add('dusty');
+          document.getElementById('quotes').innerHTML = 'Dusty weather, protect yourself and stay indoors if possible.';
+          break;
+        case 'fog':
+          body.classList.add('foggy');
+          document.getElementById('quotes').innerHTML = 'Foggy day, drive safely and embrace the mysterious fog.';
+          break;
+        case 'sand':
+          body.classList.add('sandy');
+          document.getElementById('quotes').innerHTML = 'Sandy conditions, watch out for sand blowing in the wind.';
+          break;
+        case 'ash':
+          body.classList.add('ashy');
+          document.getElementById('quotes').innerHTML = 'Ashy skies, be cautious and stay safe in volcanic ash conditions.';
+          break;
+        case 'squall':
+          body.classList.add('squally');
+          document.getElementById('quotes').innerHTML = 'Squally weather, secure loose items and stay safe in strong winds.';
+          break;
+        case 'tornado':
+          body.classList.add('tornado');
+          document.getElementById('quotes').innerHTML = 'Tornado warning, seek shelter immediately and stay safe!';
+          break;
+        default:
+          body.style.backgroundImage = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
