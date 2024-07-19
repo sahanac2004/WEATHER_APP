@@ -15,7 +15,7 @@ Edit
 Run
 Full Screen
 Copy code
-git clone https://github.com/sahanac2004/PRODIGY_WD_05.git
+git clone https://github.com/sahanac2004/WEATHER_APP.git
 Navigate to the project directory:
 bash
 Edit
